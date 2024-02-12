@@ -4,5 +4,6 @@ export interface Todo {
     description: string,
     startDate: string,
     endDate: string,
-    status: number
+    status: number,
+    priority:string
 }
