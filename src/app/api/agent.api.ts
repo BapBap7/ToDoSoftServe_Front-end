@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-const defaultBaseUrl = 'https://localhost:5000/api';
+const defaultBaseUrl = 'http://localhost:5167/api';
 
-const frontendServerBaseUrl = 'https://localhost:3000';
+const frontendServerBaseUrl = 'http://localhost:3000';
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import {Button} from "@mui/material";
+import TodoComponent from "./features/TodoPage/Todo.component";
 
 
 function App() {
     return (
         <>
-            <Button>Balls</Button>
+            <TodoComponent />
         </>
     );
 }
