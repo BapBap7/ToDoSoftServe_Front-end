@@ -1,7 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Todo } from "../../../models/todos/Todo.model";
-import Input from "@mui/joy/Input";
 import {
   FormControl,
   InputLabel,
@@ -17,24 +16,56 @@ import React from "react";
 interface ModalFormProps {
   setModalOpen: (isOpen: boolean) => void;
   onTodoCreated: () => void;
+  editMode?: boolean;
+  initialData?: Todo | null;
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({
   setModalOpen,
   onTodoCreated,
+  editMode = false,
+  initialData,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    watch
   } = useForm<Todo>();
-
-  const today = new Date().toISOString().split("T")[0];
 
   const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
+
+  const formatString = (date: string) => {
+    return date.split("T")[0];
+  }
+
+  useEffect(() => {
+    if (editMode && initialData) {
+      // Populate the form fields with initialData
+      reset({
+        id: initialData.id,
+        title: initialData.title,
+        description: initialData.description,
+        priority: initialData.priority || 'low' // Ensure priority is being set
+        // Other fields as needed
+      });
+  
+      // Set additional component state as needed for dates or other fields
+      setTaskData({
+        startDateTime: formatString(initialData.startDate), // Make sure the format matches your input field's expected format
+        dueDateTime: formatString(initialData.endDate), // Same as above regarding format
+      });
+    } else {
+      reset();
+    }
+  }, [editMode, initialData, reset]);
+
+  const today = new Date().toISOString().split("T")[0];
+
+  
 
   const [taskData, setTaskData] = useState({
     startDateTime: formatDate(new Date()), // Today's date as the default start date
@@ -58,12 +89,14 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
   const onSubmit: SubmitHandler<Todo> = async (data) => {
     try {
-      const isCreated = await TodoApi.create(data);
+      if (editMode && initialData) {
+        await TodoApi.update(data); // Assuming you have an update method
+      } else {
+        await TodoApi.create(data);
+      }
       reset();
       setModalOpen(false);
-      if (isCreated) {
-        onTodoCreated();
-      }
+      onTodoCreated(); // This should refresh the list whether it's create or update
     } catch (error) {
       console.log(error);
     }
@@ -90,6 +123,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
             labelId="priority-label"
             label="Priority"
             {...register("priority", { required: true })}
+            value={watch("priority")}
           >
             <MenuItem value="high">High</MenuItem>
             <MenuItem value="medium">Medium</MenuItem>
@@ -103,7 +137,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
               {...register("startDate", { required: true })}
               placeholder="Start Date"
               type="date"
-              sx={{ display:"flex" }}
+              sx={{ display: "flex" }}
               value={taskData.startDateTime}
               onChange={(e) => handleChange(e.target.value, "startDateTime")}
               InputProps={{
@@ -119,7 +153,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
             <TextField
               {...register("endDate", { required: true })}
               type="date"
-              sx={{ display:"flex" }}
+              sx={{ display: "flex" }}
               value={taskData.dueDateTime}
               onChange={(e) => handleChange(e.target.value, "dueDateTime")}
               InputProps={{
@@ -135,12 +169,16 @@ const ModalForm: React.FC<ModalFormProps> = ({
         </div>
         <div className="modalWindow__buttons">
           <Button type="submit" variant="contained">
-            Create
+            {editMode ? "Update" : "Create"}
           </Button>
+
           <Button
             variant="contained"
             color="error"
             onClick={() => {
+              if (editMode && initialData) {
+                reset(initialData);
+              }
               setModalOpen(false);
             }}
           >

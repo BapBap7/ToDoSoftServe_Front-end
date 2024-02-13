@@ -51,6 +51,19 @@ const TodoComponent = () => {
     fetchTodos();
   };
 
+  const [selectedTodo, setSelectedTodo] = useState<Todo | undefined>(undefined); // Use undefined instead of null
+
+  const openEditModal = (todo: Todo) => {
+    setSelectedTodo(todo); // Set the selected todo for editing
+    console.log(todo)
+    setModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setSelectedTodo(undefined); // Clear the selected todo
+    setModalOpen(true); // Open the modal
+  };
+
   return (
     <>
       {modalOpen && (
@@ -58,12 +71,14 @@ const TodoComponent = () => {
           <ModalForm
             setModalOpen={setModalOpen}
             onTodoCreated={handleTodoCreated}
+            editMode={!!selectedTodo}
+            initialData={selectedTodo} 
           ></ModalForm>
         </div>
       )}
       <div className={`${modalOpen ? "contentDimmed" : ""}`}>
         <div className="navbar">
-          <Button onClick={() => setModalOpen(true)}>Create Todo</Button>
+        <Button onClick={openCreateModal}>Create Todo</Button>
         </div>
         <div className="todoWrapper">
           <div className="left">
@@ -80,11 +95,15 @@ const TodoComponent = () => {
                     <Typography>
                       {dateParser(todo.startDate)} - {dateParser(todo.endDate)}
                     </Typography>
-                    <Typography>Priority: <span style={{ color: getPriorityColor(todo.priority) }}>{todo.priority}</span> </Typography>
-                      
+                    <Typography>
+                      Priority:{" "}
+                      <span style={{ color: getPriorityColor(todo.priority) }}>
+                        {todo.priority}
+                      </span>{" "}
+                    </Typography>
                   </div>
                   <div className="todoCard__buttons">
-                    <Button variant="outlined">View</Button>
+                    <Button variant="outlined" onClick={() => openEditModal(todo)}>View</Button>
                     <Button
                       variant="outlined"
                       onClick={() => deleteTodo(todo.id)}
@@ -97,7 +116,6 @@ const TodoComponent = () => {
               ))}
             </div>
           </div>
-          <div className="right">block</div>
         </div>
       </div>
     </>
