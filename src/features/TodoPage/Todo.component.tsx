@@ -90,7 +90,6 @@ const TodoComponent = () => {
 
   const openEditModal = (todo: Todo) => {
     setSelectedTodo(todo); // Set the selected todo for editing
-    console.log(todo);
     setModalOpen(true);
   };
 

@@ -26,6 +26,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
   editMode = false,
   initialData,
 }) => {
+  
   const {
     register,
     handleSubmit,
@@ -42,19 +43,21 @@ const ModalForm: React.FC<ModalFormProps> = ({
     return date.split("T")[0];
   };
 
+  const priorityValue = watch("priority") || '';
+
   useEffect(() => {
     if (editMode && initialData) {
       reset({
         id: initialData.id,
         title: initialData.title,
-        description: initialData.description,
         priority: initialData.priority,
+        description: initialData.description,
         status: initialData.status
       });
-
+      
       setTaskData({
-        startDateTime: formatString(initialData.startDate), // Make sure the format matches your input field's expected format
-        dueDateTime: formatString(initialData.endDate), // Same as above regarding format
+        startDateTime: formatString(initialData.startDate),
+        dueDateTime: formatString(initialData.endDate),
       });
     } else {
       reset();
@@ -64,18 +67,16 @@ const ModalForm: React.FC<ModalFormProps> = ({
   const today = new Date().toISOString().split("T")[0];
 
   const [taskData, setTaskData] = useState({
-    startDateTime: formatDate(new Date()), // Today's date as the default start date
-    dueDateTime: "", // Empty initially
+    startDateTime: formatDate(new Date()),
+    dueDateTime: "",
   });
 
   useEffect(() => {
-    // Ensure the end date is not before the start date
     if (taskData.dueDateTime && taskData.startDateTime > taskData.dueDateTime) {
       setTaskData({ ...taskData, dueDateTime: taskData.startDateTime });
     }
   }, [taskData.startDateTime]);
 
-  // Handler to update state on input change
   const handleChange = (value: string, fieldName: string) => {
     setTaskData({
       ...taskData,
@@ -86,17 +87,20 @@ const ModalForm: React.FC<ModalFormProps> = ({
   const onSubmit: SubmitHandler<Todo> = async (data) => {
     try {
       if (editMode && initialData) {
-        await TodoApi.update(data); // Assuming you have an update method
+        await TodoApi.update(data);
       } else {
         await TodoApi.create(data);
       }
       reset();
       setModalOpen(false);
-      onTodoCreated(); // This should refresh the list whether it's create or update
+      onTodoCreated();
     } catch (error) {
       console.log(error);
     }
   };
+
+  //new
+
 
   return (
     <div className="modalWindow">
@@ -119,7 +123,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
             labelId="priority-label"
             label="Priority"
             {...register("priority", { required: true })}
-            value={watch("priority")}
+            value={priorityValue}
           >
             <MenuItem value="high">High</MenuItem>
             <MenuItem value="medium">Medium</MenuItem>
