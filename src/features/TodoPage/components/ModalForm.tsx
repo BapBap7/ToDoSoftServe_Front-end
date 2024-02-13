@@ -44,16 +44,14 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
   useEffect(() => {
     if (editMode && initialData) {
-      // Populate the form fields with initialData
       reset({
         id: initialData.id,
         title: initialData.title,
         description: initialData.description,
-        priority: initialData.priority || "low", // Ensure priority is being set
-        // Other fields as needed
+        priority: initialData.priority,
+        status: initialData.status
       });
 
-      // Set additional component state as needed for dates or other fields
       setTaskData({
         startDateTime: formatString(initialData.startDate), // Make sure the format matches your input field's expected format
         dueDateTime: formatString(initialData.endDate), // Same as above regarding format
@@ -169,7 +167,6 @@ const ModalForm: React.FC<ModalFormProps> = ({
           <Button type="submit" variant="contained">
             {editMode ? "Update" : "Create"}
           </Button>
-
           <Button
             variant="contained"
             color="error"

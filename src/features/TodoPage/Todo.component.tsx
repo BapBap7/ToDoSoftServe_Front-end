@@ -155,7 +155,6 @@ const TodoComponent = () => {
                   <div className="right">
                     <Select
                       color="primary"
-                      defaultValue="Todo"
                       value={StatusEnum[todo.status]}
                       onChange={(e)=>{
                         changeTodoStatus(todo.id, StatusReverseEnumType[e.target.value])}}
