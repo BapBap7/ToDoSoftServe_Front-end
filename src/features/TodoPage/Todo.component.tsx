@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import { Todo } from "../../models/todos/Todo.model";
 import TodoApi from "../../app/api/todo/Todo.api";
@@ -20,16 +20,16 @@ const TodoComponent = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | undefined>();
 
-  const StatusEnum : StatusEnumType = {
+  const StatusEnum: StatusEnumType = {
     0: "Todo",
     1: "InProgress",
-    2: "Done"
+    2: "Done",
   };
 
-  const StatusReverseEnumType : StatusReverseEnumType = {
-    "Todo": 0,
-    "InProgress": 1,
-    "Done": 2
+  const StatusReverseEnumType: StatusReverseEnumType = {
+    Todo: 0,
+    InProgress: 1,
+    Done: 2,
   };
 
   const changeTodoStatus = async (todoId: number, newStatus: number) => {
@@ -61,7 +61,7 @@ const TodoComponent = () => {
       console.log("Failed to fetch todos: ", error);
     }
   };
-  
+
   //
   // When i click on view and editing it sets todo.status to Todo fix
   //
@@ -115,57 +115,59 @@ const TodoComponent = () => {
           <Button onClick={openCreateModal}>Create Todo</Button>
         </div>
         <div className="todoWrapper">
-          <div className="left">
-            <div className="todoCard">
-              {todos.map((todo) => (
-                <div key={todo.id} className="todoWrap">
-                  <div>
-                    <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
-                      {todo.title}
-                    </Typography>
-                    <Typography className="todoDescription">
-                      {todo.description}
-                    </Typography>
-                    <Typography>
-                      {dateParser(todo.startDate)} - {dateParser(todo.endDate)}
-                    </Typography>
-                    <Typography>
-                      Priority:{" "}
-                      <span style={{ color: getPriorityColor(todo.priority) }}>
-                        {todo.priority}
-                      </span>{" "}
-                    </Typography>
-                  </div>
-                  <div className="todoCard__buttons">
-                    <Button
-                      variant="outlined"
-                      onClick={() => openEditModal(todo)}
-                    >
-                      View
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => deleteTodo(todo.id)}
-                      color="error"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                  <div className="right">
-                    <Select
-                      color="primary"
-                      value={StatusEnum[todo.status]}
-                      onChange={(e)=>{
-                        changeTodoStatus(todo.id, StatusReverseEnumType[e.target.value])}}
-                    >
-                      <MenuItem value="Todo">Todo</MenuItem>
-                      <MenuItem value="InProgress">In Progress</MenuItem>
-                      <MenuItem value="Done">Done</MenuItem>
-                    </Select>
-                  </div>
+          <div className="todoCard">
+            {todos.map((todo) => (
+              <div key={todo.id} className="todoWrap">
+                <div>
+                  <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
+                    {todo.title}
+                  </Typography>
+                  <Typography className="todoDescription">
+                    {todo.description}
+                  </Typography>
+                  <Typography>
+                    {dateParser(todo.startDate)} - {dateParser(todo.endDate)}
+                  </Typography>
+                  <Typography>
+                    Priority:{" "}
+                    <span style={{ color: getPriorityColor(todo.priority) }}>
+                      {todo.priority}
+                    </span>{" "}
+                  </Typography>
                 </div>
-              ))}
-            </div>
+                <div className="todoCard__buttons">
+                  <Button
+                    variant="outlined"
+                    onClick={() => openEditModal(todo)}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => deleteTodo(todo.id)}
+                    color="error"
+                  >
+                    Delete
+                  </Button>
+                </div>
+                <div>
+                  <Select
+                    color="primary"
+                    value={StatusEnum[todo.status]}
+                    onChange={(e) => {
+                      changeTodoStatus(
+                        todo.id,
+                        StatusReverseEnumType[e.target.value]
+                      );
+                    }}
+                  >
+                    <MenuItem value="Todo">Todo</MenuItem>
+                    <MenuItem value="InProgress">In Progress</MenuItem>
+                    <MenuItem value="Done">Done</MenuItem>
+                  </Select>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

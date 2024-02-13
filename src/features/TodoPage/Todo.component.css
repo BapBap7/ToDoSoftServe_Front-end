@@ -1,5 +1,6 @@
 .todoCard {
   gap: 10px;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -21,17 +22,7 @@
   padding: 5px;
 }
 
-.todoWrapper {
-  width: 100%;
-  display: flex;
-}
-
-.left {
-  margin: 20px;
-  width: 100%;
-}
-
-.right {
+.todoWrapper{
   margin: 20px;
 }
 
@@ -39,6 +30,7 @@
   width: 100%;
   display: flex;
   gap: 10px;
+  margin-bottom: 5px;
 }
 
 .modalBackdrop {
