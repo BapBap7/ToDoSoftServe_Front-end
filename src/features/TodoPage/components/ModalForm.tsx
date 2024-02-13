@@ -31,7 +31,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    watch
+    watch,
   } = useForm<Todo>();
 
   const formatDate = (date: Date) => {
@@ -40,7 +40,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
   const formatString = (date: string) => {
     return date.split("T")[0];
-  }
+  };
 
   useEffect(() => {
     if (editMode && initialData) {
@@ -49,10 +49,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
         id: initialData.id,
         title: initialData.title,
         description: initialData.description,
-        priority: initialData.priority || 'low' // Ensure priority is being set
+        priority: initialData.priority || "low", // Ensure priority is being set
         // Other fields as needed
       });
-  
+
       // Set additional component state as needed for dates or other fields
       setTaskData({
         startDateTime: formatString(initialData.startDate), // Make sure the format matches your input field's expected format
@@ -64,8 +64,6 @@ const ModalForm: React.FC<ModalFormProps> = ({
   }, [editMode, initialData, reset]);
 
   const today = new Date().toISOString().split("T")[0];
-
-  
 
   const [taskData, setTaskData] = useState({
     startDateTime: formatDate(new Date()), // Today's date as the default start date

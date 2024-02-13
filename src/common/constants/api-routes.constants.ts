@@ -6,6 +6,6 @@ export const API_ROUTES = {
         CREATE:'Todo/CreateTodo',
         DELETE:'Todo/Delete',
         UPDATE:'Todo/Update',
-        CHANGE_STATUS:'Todo/ChangeTodoStatus'
+        CHANGE_STATUS:'Todo/ChangeJobStatus'
     }
 }
