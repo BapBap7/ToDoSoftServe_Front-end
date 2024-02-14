@@ -1,4 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 import { useEffect, useState } from "react";
 import { Todo } from "../../../models/todos/Todo.model";
 import {
@@ -9,6 +10,7 @@ import {
   Button,
   TextField,
   FormLabel,
+  Typography,
 } from "@mui/material";
 import TodoApi from "../../../app/api/todo/Todo.api";
 import React from "react";
@@ -26,7 +28,6 @@ const ModalForm: React.FC<ModalFormProps> = ({
   editMode = false,
   initialData,
 }) => {
-  
   const {
     register,
     handleSubmit,
@@ -43,7 +44,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
     return date.split("T")[0];
   };
 
-  const priorityValue = watch("priority") || '';
+  const priorityValue = watch("priority") || "";
 
   useEffect(() => {
     if (editMode && initialData) {
@@ -52,9 +53,9 @@ const ModalForm: React.FC<ModalFormProps> = ({
         title: initialData.title,
         priority: initialData.priority,
         description: initialData.description,
-        status: initialData.status
+        status: initialData.status,
       });
-      
+
       setTaskData({
         startDateTime: formatString(initialData.startDate),
         dueDateTime: formatString(initialData.endDate),
@@ -101,28 +102,33 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
   //new
 
-
   return (
     <div className="modalWindow">
       <form onSubmit={handleSubmit(onSubmit)} className="modalWindow__form">
         <TextField
           fullWidth
           placeholder="Title"
-          {...register("title", { required: true })}
+          {...register("title", { required: "Title is required" })}
         />
+        <Typography color="error">
+          <ErrorMessage errors={errors} name="title" />
+        </Typography>
         <TextField
           fullWidth
           multiline
           rows={3}
           placeholder="Description"
-          {...register("description", { required: true })}
+          {...register("description", { required: "Description is required" })}
         />
+        <Typography color="error">
+          <ErrorMessage errors={errors} name="description" />
+        </Typography>
         <FormControl fullWidth>
           <InputLabel id="priority-label">Priority</InputLabel>
           <Select
             labelId="priority-label"
             label="Priority"
-            {...register("priority", { required: true })}
+            {...register("priority", { required: "Priority is required" })}
             value={priorityValue}
           >
             <MenuItem value="high">High</MenuItem>
@@ -130,11 +136,14 @@ const ModalForm: React.FC<ModalFormProps> = ({
             <MenuItem value="low">Low</MenuItem>
           </Select>
         </FormControl>
+        <Typography color="error">
+          <ErrorMessage errors={errors} name="priority" />
+        </Typography>
         <div className="modalWindow__date">
           <div className="modalWindow__date__inner">
             <FormLabel>Start Date</FormLabel>
             <TextField
-              {...register("startDate", { required: true })}
+              {...register("startDate", { required: "Start date is required" })}
               placeholder="Start Date"
               type="date"
               sx={{ display: "flex" }}
@@ -142,16 +151,18 @@ const ModalForm: React.FC<ModalFormProps> = ({
               onChange={(e) => handleChange(e.target.value, "startDateTime")}
               InputProps={{
                 inputProps: {
-                  min: today,
                   max: taskData.dueDateTime,
                 },
               }}
             />
+            <Typography color="error">
+              <ErrorMessage errors={errors} name="startDate" />
+            </Typography>
           </div>
           <div className="modalWindow__date__inner">
             <FormLabel>End Date</FormLabel>
             <TextField
-              {...register("endDate", { required: true })}
+              {...register("endDate", { required: "End date is required" })}
               type="date"
               sx={{ display: "flex" }}
               value={taskData.dueDateTime}
@@ -165,6 +176,9 @@ const ModalForm: React.FC<ModalFormProps> = ({
                 },
               }}
             />
+            <Typography color="error">
+              <ErrorMessage errors={errors} name="endDate" />
+            </Typography>
           </div>
         </div>
         <div className="modalWindow__buttons">
