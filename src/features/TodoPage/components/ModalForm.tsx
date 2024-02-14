@@ -28,6 +28,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
   editMode = false,
   initialData,
 }) => {
+  const formatDateToString = (date: Date) => {
+    return date.toISOString().split("T")[0];
+  };
+
   const {
     register,
     handleSubmit,
@@ -36,17 +40,19 @@ const ModalForm: React.FC<ModalFormProps> = ({
     watch,
   } = useForm<Todo>();
 
-  const formatDate = (date: Date) => {
-    return date.toISOString().split("T")[0];
-  };
+  const [taskData, setTaskData] = useState({
+    startDateTime: formatDateToString(new Date()),
+    dueDateTime: "",
+  });
 
-  const formatString = (date: string) => {
+  const formatDateToFormat = (date: string) => {
     return date.split("T")[0];
   };
 
   const priorityValue = watch("priority") || "";
 
   useEffect(() => {
+    // This part handles setting up the form for edit mode or resetting it
     if (editMode && initialData) {
       reset({
         id: initialData.id,
@@ -55,28 +61,22 @@ const ModalForm: React.FC<ModalFormProps> = ({
         description: initialData.description,
         status: initialData.status,
       });
-
+  
+      const startDateTimeFormatted = formatDateToFormat(initialData.startDate);
+      const dueDateTimeFormatted = formatDateToFormat(initialData.endDate);
+  
       setTaskData({
-        startDateTime: formatString(initialData.startDate),
-        dueDateTime: formatString(initialData.endDate),
+        startDateTime: startDateTimeFormatted,
+        dueDateTime: startDateTimeFormatted > dueDateTimeFormatted ? startDateTimeFormatted : dueDateTimeFormatted,
       });
     } else {
       reset();
+      setTaskData({
+        startDateTime: formatDateToString(new Date()),
+        dueDateTime: "",
+      });
     }
   }, [editMode, initialData, reset]);
-
-  const today = new Date().toISOString().split("T")[0];
-
-  const [taskData, setTaskData] = useState({
-    startDateTime: formatDate(new Date()),
-    dueDateTime: "",
-  });
-
-  useEffect(() => {
-    if (taskData.dueDateTime && taskData.startDateTime > taskData.dueDateTime) {
-      setTaskData({ ...taskData, dueDateTime: taskData.startDateTime });
-    }
-  }, [taskData.startDateTime]);
 
   const handleChange = (value: string, fieldName: string) => {
     setTaskData({
@@ -171,7 +171,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
                 inputProps: {
                   min:
                     taskData.startDateTime === ""
-                      ? today
+                      ? formatDateToString(new Date())
                       : taskData.startDateTime,
                 },
               }}

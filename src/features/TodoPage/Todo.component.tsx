@@ -6,36 +6,16 @@ import { Todo } from "../../models/todos/Todo.model";
 import TodoApi from "../../app/api/todo/Todo.api";
 import "./Todo.component.css";
 import ModalForm from "./components/ModalForm";
-
-type StatusEnumType = {
-  [key: number]: string;
-};
-
-type StatusReverseEnumType = {
-  [key: string]: number;
-};
+import {statusEnumType, statusReverseEnumType} from './enums/StatusEnum'
 
 const TodoComponent = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | undefined>();
 
-  const StatusEnum: StatusEnumType = {
-    0: "Todo",
-    1: "InProgress",
-    2: "Done",
-  };
-
-  const StatusReverseEnumType: StatusReverseEnumType = {
-    Todo: 0,
-    InProgress: 1,
-    Done: 2,
-  };
-
   const changeTodoStatus = async (todoId: number, newStatus: number) => {
     try {
       await TodoApi.changeStatus(todoId, newStatus);
-      // Update the todos array with the new status
       fetchTodos();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -62,10 +42,6 @@ const TodoComponent = () => {
     }
   };
 
-  //
-  // When i click on view and editing it sets todo.status to Todo fix
-  //
-
   const dateParser = (date: string) => {
     const updatedDate = date.split("T");
     return updatedDate[0];
@@ -84,10 +60,6 @@ const TodoComponent = () => {
     }
   };
 
-  const handleTodoCreated = () => {
-    fetchTodos();
-  };
-
   const openEditModal = (todo: Todo) => {
     setSelectedTodo(todo); // Set the selected todo for editing
     setModalOpen(true);
@@ -104,7 +76,7 @@ const TodoComponent = () => {
         <div className="modalBackdrop">
           <ModalForm
             setModalOpen={setModalOpen}
-            onTodoCreated={handleTodoCreated}
+            onTodoCreated={fetchTodos}
             editMode={!!selectedTodo}
             initialData={selectedTodo}
           ></ModalForm>
@@ -153,11 +125,11 @@ const TodoComponent = () => {
                 <div>
                   <Select
                     color="primary"
-                    value={StatusEnum[todo.status]}
+                    value={statusEnumType[todo.status]}
                     onChange={(e) => {
                       changeTodoStatus(
                         todo.id,
-                        StatusReverseEnumType[e.target.value]
+                        statusReverseEnumType[e.target.value]
                       );
                     }}
                   >
