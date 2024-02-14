@@ -7,6 +7,7 @@ import TodoApi from "../../app/api/todo/Todo.api";
 import "./Todo.component.css";
 import ModalForm from "./components/ModalForm";
 import {statusEnumType, statusReverseEnumType} from './enums/StatusEnum'
+import { colorEnumType } from "./enums/PriorityColor";
 
 const TodoComponent = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -22,23 +23,21 @@ const TodoComponent = () => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "red";
-      case "medium":
-        return "orange";
-      case "low":
-        return "green";
-    }
-  };
-
   const fetchTodos = async () => {
     try {
       const fetchTodos = await TodoApi.getAll();
       setTodos(fetchTodos);
     } catch (error) {
       console.log("Failed to fetch todos: ", error);
+    }
+  };
+
+  const deleteTodo = async (id: number) => {
+    try {
+      await TodoApi.deleteTodo(id);
+      fetchTodos();
+    } catch (error) {
+      console.log("Failed to delete todo: ", error);
     }
   };
 
@@ -50,15 +49,6 @@ const TodoComponent = () => {
   useEffect(() => {
     fetchTodos();
   }, []);
-
-  const deleteTodo = async (id: number) => {
-    try {
-      await TodoApi.deleteTodo(id);
-      fetchTodos();
-    } catch (error) {
-      console.log("Failed to delete todo: ", error);
-    }
-  };
 
   const openEditModal = (todo: Todo) => {
     setSelectedTodo(todo); // Set the selected todo for editing
@@ -102,7 +92,7 @@ const TodoComponent = () => {
                   </Typography>
                   <Typography>
                     Priority:{" "}
-                    <span style={{ color: getPriorityColor(todo.priority) }}>
+                    <span style={{ color: colorEnumType[todo.priority] }}>
                       {todo.priority}
                     </span>{" "}
                   </Typography>
